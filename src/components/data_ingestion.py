@@ -59,3 +59,4 @@ if __name__=="__main__":
     
 # Needed to include dir 'src' in PYTHONPATH:  
 # set PYTHONPATH=%PYTHONPATH%;C:\Users\anton\OneDrive\Documentos\mlproject
+# Use conda activate venv/
