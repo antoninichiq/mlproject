@@ -2,7 +2,6 @@ import os
 import sys
 from dataclasses import dataclass
 
-from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor,AdaBoostRegressor
 from sklearn.svm import SVR
@@ -12,8 +11,7 @@ from sklearn.ensemble import(
     GradientBoostingRegressor,
     RandomForestRegressor
 )
-from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
-from sklearn.model_selection import RandomizedSearchCV, train_test_split
+from sklearn.metrics import r2_score
 from catboost import CatBoostRegressor
 from xgboost import XGBRegressor
 
@@ -33,8 +31,8 @@ class ModelTrainer:
         try:
             logging.info("Split training and test input data")
             X_train,y_train,X_test,y_test=(
-                train_array[:,:-1],
-                train_array[:,-1],
+                train_array[:,:-1],#take all the rows and all the columns except the last one
+                train_array[:,-1],#take all the rows and only the last column 
                 test_array[:,:-1],
                 test_array[:,-1]
             )

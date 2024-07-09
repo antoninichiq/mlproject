@@ -14,7 +14,7 @@ from src.logger import logging
 
 from src.utils import save_object
 
-@dataclass
+@dataclass # used for class within only define variables. But if you have other functions inside go ahead with normal class __init__
 class DataTransformationConfig:
     preprocessor_obj_file_path=os.path.join("artifacts","preprocessor.pkl")
     
@@ -22,7 +22,7 @@ class DataTransformation:
     def __init__(self):
         self.data_transformation_config=DataTransformationConfig()
     
-    def get_data_transformer_object(self):
+    def get_data_transformer_object(self):#create the model preprocessor to handle missing values, onehot, scaler
         '''
         This function is responsible for data transformation
         '''
@@ -36,7 +36,7 @@ class DataTransformation:
             "test_preparation_course"]
             num_pipeline=Pipeline(
                steps=[
-                   ("imputer",SimpleImputer(strategy="median")),
+                   ("imputer",SimpleImputer(strategy="median")),#handling missing values
                    ("scaler",StandardScaler(with_mean=False))
                ]               
             )
@@ -61,7 +61,7 @@ class DataTransformation:
         except Exception as e:
             raise CustomException(e,sys)
     
-    def initiate_data_transformation(self,train_path,test_path):
+    def initiate_data_transformation(self,train_path,test_path):#use the model preprocessor on dataset to handle missing values, onehot, scaler and have a final train and test dataset. It isn't still divided into X_train etc
         try:
             train_df=pd.read_csv(train_path)
             test_df=pd.read_csv(test_path)
@@ -73,8 +73,7 @@ class DataTransformation:
             preprocessing_obj=self.get_data_transformer_object()
             
             target_column_name="math_score"
-            numerical_columns = ["writing_score", "reading_score"]
-            
+                        
             input_feature_train_df=train_df.drop(columns=[target_column_name],axis=1)
             target_feature_train_df=train_df[target_column_name]
             
@@ -89,11 +88,18 @@ class DataTransformation:
             
             train_array=np.c_[
                 input_feature_train_array,np.array(target_feature_train_df)
-            ]
+            ]            
             test_array=np.c_[input_feature_test_array,np.array(target_feature_test_df)]
             logging.info(f"Saved preprocessing object")
+            #np.c_ 
+            #a = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) #features
+            #b = np.array([10, 11, 12]) #target
+            #c = np.c_[a, b]
+            #[[ 1  2  3 10]
+            #[ 4  5  6 11]
+            #[ 7  8  9 12]]
             
-            save_object( # Saving the pickle file
+            save_object( # Saving the preprocessor pickle file
                 file_path=self.data_transformation_config.preprocessor_obj_file_path,
                 obj=preprocessing_obj
             )
